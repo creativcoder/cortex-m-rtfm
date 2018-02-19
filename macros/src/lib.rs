@@ -1,5 +1,5 @@
 //! Procedural macros of the `cortex-m-rtfm` crate
-#![deny(warnings)]
+// #![deny(warnings)]
 #![feature(proc_macro)]
 #![recursion_limit = "128"]
 
@@ -15,9 +15,9 @@ use proc_macro::TokenStream;
 use syntax::App;
 use syntax::error::*;
 
-mod analyze;
-mod check;
-mod trans;
+// mod analyze;
+// mod check;
+// mod trans;
 
 /// The `app!` macro, a macro used to specify the tasks and resources of a RTFM application.
 ///
@@ -176,14 +176,22 @@ pub fn app(ts: TokenStream) -> TokenStream {
 }
 
 fn run(ts: TokenStream) -> Result<TokenStream> {
-    let input = format!("{}", ts);
+    // let input = format!("{}", ts);
 
-    let app = App::parse(&input).chain_err(|| "parsing")?;
-    let app = syntax::check::app(app).chain_err(|| "checking the AST")?;
-    let app = check::app(app)?;
+    let app = App::parse(ts).chain_err(|| "parsing")?;
 
-    let ownerships = analyze::app(&app);
-    let tokens = trans::app(&app, &ownerships);
+    // TODO remove these when above is done
+    let tokens = (quote! {
+        fn main() {
+
+        }
+    });
+    // Enable these back
+    // let app = syntax::check::app(app).chain_err(|| "checking the AST")?;
+    // let app = check::app(app)?;
+
+    // let ownerships = analyze::app(&app);
+    // let tokens = trans::app(&app, &ownerships);
 
     Ok(format!("{}", tokens)
         .parse()
